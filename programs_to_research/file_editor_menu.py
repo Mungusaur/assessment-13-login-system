@@ -21,5 +21,5 @@ def open_in_default_editor(filepath):
         subprocess.Popen(["xdg-open", filepath])
 
 # Example usage:
-file_to_open = "example.txt"
+file_to_open = "C:/USERS/Astle.vanDam/OneDrive - Henderson High School/Code files/91896-Mungusaur/database.txt"
 open_in_default_editor(file_to_open)
