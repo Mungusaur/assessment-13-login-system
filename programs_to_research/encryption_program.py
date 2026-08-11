@@ -15,14 +15,15 @@ with open('secret.key', 'rb') as key_file:
 fernet = Fernet(key)
 
 # 3. Read the original data from your target file
-with open('data.txt', 'rb') as file:
+with open(r'C:\USERS\Astle.vanDam\OneDrive - Henderson High School\Code files\login-system-assement\programs_to_research\data.txt', 'rb') as file:
     original_data = file.read()
 
 # 4. Encrypt the data
 encrypted_data = fernet.encrypt(original_data)
 
 # 5. Write the encrypted data back to the file (or a new file)
-with open('data.txt', 'wb') as file:
+with open(r'C:\USERS\Astle.vanDam\OneDrive - Henderson High School\Code files\login-system-assement\programs_to_research\data.txt', 'wb') as file:
     file.write(encrypted_data)
 
 print("File successfully encrypted.")
+print(encrypted_data)
