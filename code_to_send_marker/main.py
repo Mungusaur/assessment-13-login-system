@@ -5,7 +5,17 @@ import subprocess
 import sys
 import os
 
-user = "default"
+users = {
+    1:{
+        "user_name":"default_1",
+        "user_file":"file_1"
+       },
+    2:{
+        "user_name":"default_2",
+        "user_file":"file_2"
+       }
+
+}
 
 def check_key():
     dir_path = Path(__file__).resolve().parent
