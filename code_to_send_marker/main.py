@@ -9,10 +9,12 @@ import os
 users = {
     1:{
         "user_name":"default_1",
+        "password":"password_1",
         "user_file":"file_1"
        },
     2:{
         "user_name":"default_2",
+        "password":"password_2",
         "user_file":"file_2"
        }
 
@@ -92,6 +94,10 @@ def verify(username, password):
     with open("user_info.txt", "r") as file:
         a = file.read()
     __encrypt__("user_info.txt")
+    list_of_users = []
+    for i in range(len(list(users.keys()))):
+        list_of_users.append(users[users[i+1]])
+        print(users[users[i+1]])
 
 def __init__():
     while True:
