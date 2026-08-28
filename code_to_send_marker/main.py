@@ -1,4 +1,5 @@
 # This is the notice saying that I Astle van Dam say this is all my own work
+from easygui import *
 from cryptography.fernet import Fernet
 from pathlib import Path
 import subprocess
@@ -83,3 +84,23 @@ def __decrypt__(txt):
 def encrypt_user(txt, user):
     pass
 
+def decrypt_user(txt, user):
+    pass
+
+def verify(username, password):
+    __decrypt__("user_info.txt")
+    with open("user_info.txt", "r") as file:
+        a = file.read()
+    __encrypt__("user_info.txt")
+
+def __init__():
+    while True:
+        login_signin = buttonbox(choices=["Login", "Sign in"])
+        while login_signin == "Login":
+            login_details = multenterbox(msg="Enter your login details:", fields=["Username", "Password"])
+            verify(login_details[0], login_details[1])
+        while login_signin == "Sign in":
+            pass
+
+__init__()
+    
