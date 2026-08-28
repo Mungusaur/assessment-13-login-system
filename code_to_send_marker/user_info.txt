@@ -1,1 +1,1 @@
-users = {1:{"user_name":"default_1","user_file":"file_1"},2:{"user_name":"default_2","user_file":"file_2"}}
+{1: {'user_name': 'default_1', 'password': 'password_1', 'user_file': 'file_1'}, 2: {'user_name': 'default_2', 'password': 'password_2', 'user_file': 'file_2'}}

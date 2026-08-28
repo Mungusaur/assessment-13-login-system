@@ -40,6 +40,7 @@ def dict_to_txt(txt, dictionary):
     dir_path = Path(__file__).resolve().parent
     near_tru_path = str(dir_path) + "/"
     tru_path = near_tru_path + txt
+    dictionary = str(dictionary)
     with open(tru_path, "w") as file:
         file.write(dictionary)
 
@@ -100,6 +101,7 @@ def verify(username, password):
         print(users[users[i+1]])
 
 def __init__():
+    dict_to_txt("user_info.txt", users)
     while True:
         login_signin = buttonbox(choices=["Login", "Sign in"])
         while login_signin == "Login":
