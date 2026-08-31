@@ -1,4 +1,7 @@
 # This is the notice saying that I Astle van Dam say this is all my own work
+# Unfortunately I cannot find out how to fix the bug where the open(file, x) command doesn't work on my computer so I am unable to automate the creation of files.
+# When creating a new user please make sure to create a file with the name of user_file[insert number here].txt so that the program will recognise it and open it when,
+# it calls for the user file linked to it. 
 from easygui import *
 from cryptography.fernet import Fernet
 from pathlib import Path
@@ -135,6 +138,8 @@ def verify(username, password):
 # This is still not complete.
 
 def make_files():
+    __decrypt__("user_info.txt")
+    users = txt_to_dict("user_info.txt", users)
     for i in range(len(list(users.keys()))):
         user_file = users[list(users.keys())[i]]["user_file"]
         if not os.path.exists(user_file + ".txt"):
@@ -145,10 +150,11 @@ def make_files():
 
 def __init__():
     make_files()
+    __decrypt__("user_info.txt")
     if not os.path.exists("user_info.txt"):
         dict_to_txt("user_info.txt", users)
     else:
-        txt_to_dict("user_info.txt", users)
+        users = txt_to_dict("user_info.txt", users)
     while True:
         login_signin = buttonbox(choices=["Login", "Sign in", "Exit"])
         if login_signin == "Exit":
@@ -163,7 +169,9 @@ def __init__():
                 "password":new_user_details[1],
                 "user_file":"file_" + str(len(users)+1)
             }
+            __decrypt__("user_info.txt")
             dict_to_txt("user_info.txt", users)
+            __encrypt__("user_info.txt")
             login_signin = buttonbox(choices=["Login", "Sign in", "Exit"])
 
 __init__()
