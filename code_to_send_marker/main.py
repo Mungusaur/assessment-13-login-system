@@ -110,11 +110,6 @@ def __decrypt__(txt):
     with open(tru_path, "w") as file:
         file.write(new_data)
     return "complete"
-def encrypt_user(txt, user):
-    pass
-
-def decrypt_user(txt, user):
-    pass
 
 def verify(username, password):
     __decrypt__("user_info.txt")
