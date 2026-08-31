@@ -1,7 +1,7 @@
 # This is the notice saying that I Astle van Dam say this is all my own work
 # Unfortunately I cannot find out how to fix the bug where the open(file, x) command doesn't work on my computer so I am unable to automate the creation of files.
 # When creating a new user please make sure to create a file with the name of user_file[insert number here].txt so that the program will recognise it and open it when,
-# it calls for the user file linked to it. 
+# it calls for the user file linked to it.
 from easygui import *
 from cryptography.fernet import Fernet
 from pathlib import Path
