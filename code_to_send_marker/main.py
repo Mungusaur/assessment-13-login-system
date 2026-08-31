@@ -100,15 +100,35 @@ def verify(username, password):
         list_of_users.append(users[users[i+1]])
         print(users[users[i+1]])
 
+def make_files():
+    for i in range(len(list(users.keys()))):
+        user_file = users[users[i+1]]["user_file"]
+        if not os.path.exists(user_file + ".txt"):
+            with open(user_file + ".txt", "w") as file:
+                file.write("This is the file for " + users[users[i+1]]["user_name"])
+            __encrypt__(user_file + ".txt")
+
 def __init__():
-    dict_to_txt("user_info.txt", users)
+    if not os.path.exists("user_info.txt"):
+        dict_to_txt("user_info.txt", users)
+    else:
+        txt_to_dict("user_info.txt", users)
     while True:
-        login_signin = buttonbox(choices=["Login", "Sign in"])
+        login_signin = buttonbox(choices=["Login", "Sign in", "Exit"])
+        if login_signin == "Exit":
+            break
         while login_signin == "Login":
             login_details = multenterbox(msg="Enter your login details:", fields=["Username", "Password"])
             verify(login_details[0], login_details[1])
         while login_signin == "Sign in":
-            pass
+            new_user_details = multenterbox(msg="Enter your new user details:", fields=["Username", "Password"])
+            users[len(users)+1] = {
+                "user_name":new_user_details[0],
+                "password":new_user_details[1],
+                "user_file":"file_" + str(len(users)+1)
+            }
+            dict_to_txt("user_info.txt", users)
+            login_signin = buttonbox(choices=["Login", "Sign in", "Exit"])
 
 __init__()
     
