@@ -24,19 +24,22 @@ def open_in_default_editor(filepath):
     # Ensure the file exists before opening
     if not os.path.exists(filepath):
         print(f"Error: File '{filepath}' does not exist.")
-        return
+        return False
 
     # Windows platform
     if sys.platform == "win32":
         os.startfile(filepath)
+        return True
         
     # macOS platform
     elif sys.platform == "darwin":
         subprocess.Popen(["open", filepath])
+        return True
         
     # Linux and Unix-like platforms
     else:
         subprocess.Popen(["xdg-open", filepath])
+        return True
 
 def check_key():
     dir_path = Path(__file__).resolve().parent
@@ -127,9 +130,10 @@ def verify(username, password):
             msgbox("Login successful!")
             user_file = [user["user_file"] for user in list_of_users if user["user_name"] == username][0]
             __decrypt__(user_file + ".txt")
-            with open(user_file + ".txt", "r") as file:
-                a = file.read()
-            open_in_default_editor(user_file + ".txt")
+            a = open_in_default_editor(user_file + ".txt")
+            while a == False:
+                make_files()
+                a = open_in_default_editor(user_file + ".txt")
             __encrypt__(user_file + ".txt")
         else:
             msgbox("Incorrect password.")
