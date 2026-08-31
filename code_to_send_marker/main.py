@@ -20,6 +20,24 @@ users = {
 
 }
 
+def open_in_default_editor(filepath):
+    # Ensure the file exists before opening
+    if not os.path.exists(filepath):
+        print(f"Error: File '{filepath}' does not exist.")
+        return
+
+    # Windows platform
+    if sys.platform == "win32":
+        os.startfile(filepath)
+        
+    # macOS platform
+    elif sys.platform == "darwin":
+        subprocess.Popen(["open", filepath])
+        
+    # Linux and Unix-like platforms
+    else:
+        subprocess.Popen(["xdg-open", filepath])
+
 def check_key():
     dir_path = Path(__file__).resolve().parent
     a = str(dir_path) + r"\donotopen.key"
@@ -45,6 +63,7 @@ def dict_to_txt(txt, dictionary):
         file.write(dictionary)
 
 def txt_to_dict(txt, dictionary):
+    __decrypt__("user_info.txt")
     dir_path = Path(__file__).resolve().parent
     near_tru_path = str(dir_path) + "/"
     tru_path = near_tru_path + txt
@@ -52,9 +71,11 @@ def txt_to_dict(txt, dictionary):
         a = file.read()
     b = dict(a)
     dictionary = b
+    __encrypt__("user_info.txt")
     return dictionary
 
 def __encrypt__(txt):
+    # Currently bug fixing.
     dir_path = Path(__file__).resolve().parent
     near_tru_path = str(dir_path) + "/"
     tru_path = near_tru_path + txt
@@ -76,6 +97,8 @@ def __decrypt__(txt):
     tru_path = near_tru_path + txt
     with open(tru_path, "r") as file:
         txt_content = file.read()
+        if txt_content == '':
+            return "empty"
     key = check_key()
     fernet = Fernet(key)
     new_data = fernet.decrypt(txt_content)
@@ -83,7 +106,7 @@ def __decrypt__(txt):
     new_data = new_data[3:-1]
     with open(tru_path, "w") as file:
         file.write(new_data)
-
+    return "complete"
 def encrypt_user(txt, user):
     pass
 
@@ -97,18 +120,32 @@ def verify(username, password):
     __encrypt__("user_info.txt")
     list_of_users = []
     for i in range(len(list(users.keys()))):
-        list_of_users.append(users[users[i+1]])
-        print(users[users[i+1]])
+        list_of_users.append(users[list(users.keys())[i]])
+        print(users[list(users.keys())[i]])
+    if username in [user["user_name"] for user in list_of_users]:
+        if password == [user["password"] for user in list_of_users if user["user_name"] == username][0]:
+            msgbox("Login successful!")
+            user_file = [user["user_file"] for user in list_of_users if user["user_name"] == username][0]
+            __decrypt__(user_file + ".txt")
+            with open(user_file + ".txt", "r") as file:
+                a = file.read()
+            open_in_default_editor(user_file + ".txt")
+            __encrypt__(user_file + ".txt")
+        else:
+            msgbox("Incorrect password.")
+# This is still not complete.
 
 def make_files():
     for i in range(len(list(users.keys()))):
-        user_file = users[users[i+1]]["user_file"]
+        user_file = users[list(users.keys())[i]]["user_file"]
         if not os.path.exists(user_file + ".txt"):
-            with open(user_file + ".txt", "w") as file:
-                file.write("This is the file for " + users[users[i+1]]["user_name"])
+            with open(user_file + ".txt", "x") as file:
+                file.write("This is the file for " + users[list(users.keys())[i]]["user_name"])
             __encrypt__(user_file + ".txt")
+        print("file created")
 
 def __init__():
+    make_files()
     if not os.path.exists("user_info.txt"):
         dict_to_txt("user_info.txt", users)
     else:
