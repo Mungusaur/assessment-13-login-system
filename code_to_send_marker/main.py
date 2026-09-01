@@ -197,16 +197,17 @@ def __init__():
                 except TypeError:
                     break
         while login_signin == "Sign in":
+            try:
+                __decrypt__("user_info.txt")
+            except:
+                pass
+            users = txt_to_dict("user_info.txt")
             new_user_details = multenterbox(msg="Enter your new user details:", fields=["Username", "Password"])
             users[len(users)+1] = {
                 "user_name":new_user_details[0],
                 "password":new_user_details[1],
                 "user_file":"file_" + str(len(users)+1)
             }
-            try:
-                __decrypt__("user_info.txt")
-            except:
-                pass
             dict_to_txt("user_info.txt", users)
             try:
                 __encrypt__("user_info.txt")
