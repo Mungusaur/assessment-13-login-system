@@ -177,6 +177,7 @@ def __init__():
     make_files()
     __decrypt__("user_info.txt")
     if not os.path.exists("user_info.txt"):
+        global users
         dict_to_txt("user_info.txt", users)
     else:
         users = txt_to_dict("user_info.txt")
