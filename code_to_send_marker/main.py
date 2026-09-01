@@ -68,8 +68,11 @@ def dict_to_txt(txt, dictionary):
     with open(tru_path, "w") as file:
         file.write(dictionary)
 
-def txt_to_dict(txt, dictionary):
-    __decrypt__("user_info.txt")
+def txt_to_dict(txt):
+    try:
+        __decrypt__("user_info.txt")
+    except:
+        pass
     dir_path = Path(__file__).resolve().parent
     near_tru_path = str(dir_path) + "/"
     tru_path = near_tru_path + txt
@@ -77,7 +80,10 @@ def txt_to_dict(txt, dictionary):
         a = file.read()
     b = dict(a)
     dictionary = b
-    __encrypt__("user_info.txt")
+    try:
+        __encrypt__("user_info.txt")
+    except:
+        pass
     return dictionary
 
 def __encrypt__(txt):
@@ -115,10 +121,16 @@ def __decrypt__(txt):
     return "complete"
 
 def verify(username, password):
-    __decrypt__("user_info.txt")
+    try:
+        __decrypt__("user_info.txt")
+    except:
+        pass
     with open("user_info.txt", "r") as file:
         a = file.read()
-    __encrypt__("user_info.txt")
+    try:
+        __encrypt__("user_info.txt")
+    except:
+        pass
     list_of_users = []
     for i in range(len(list(users.keys()))):
         list_of_users.append(users[list(users.keys())[i]])
@@ -127,25 +139,38 @@ def verify(username, password):
         if password == [user["password"] for user in list_of_users if user["user_name"] == username][0]:
             msgbox("Login successful!")
             user_file = [user["user_file"] for user in list_of_users if user["user_name"] == username][0]
-            __decrypt__(user_file + ".txt")
+            try:
+                __decrypt__(user_file + ".txt")
+            except:
+                pass
             a = open_in_default_editor(user_file + ".txt")
             while a == False:
                 make_files()
                 a = open_in_default_editor(user_file + ".txt")
-            __encrypt__(user_file + ".txt")
+            try:
+                __encrypt__(user_file + ".txt")
+            except:
+                pass
+            return True
         else:
-            msgbox("Incorrect password.")
+            return False
 # This is still not complete.
 
 def make_files():
-    __decrypt__("user_info.txt")
-    users = txt_to_dict("user_info.txt", users)
+    try:
+        __decrypt__("user_info.txt")
+    except:
+        pass
+    users = txt_to_dict("user_info.txt")
     for i in range(len(list(users.keys()))):
         user_file = users[list(users.keys())[i]]["user_file"]
         if not os.path.exists(user_file + ".txt"):
             with open(user_file + ".txt", "x") as file:
                 file.write("This is the file for " + users[list(users.keys())[i]]["user_name"])
-            __encrypt__(user_file + ".txt")
+            try:
+                __encrypt__(user_file + ".txt")
+            except:
+                pass
         print("file created")
 
 def __init__():
@@ -154,14 +179,23 @@ def __init__():
     if not os.path.exists("user_info.txt"):
         dict_to_txt("user_info.txt", users)
     else:
-        users = txt_to_dict("user_info.txt", users)
+        users = txt_to_dict("user_info.txt")
     while True:
         login_signin = buttonbox(choices=["Login", "Sign in", "Exit"])
         if login_signin == "Exit":
             break
         while login_signin == "Login":
             login_details = multenterbox(msg="Enter your login details:", fields=["Username", "Password"])
-            verify(login_details[0], login_details[1])
+            try:
+                verification = verify(login_details[0], login_details[1])
+            except TypeError:
+                break
+            while verification != True:
+                login_details = multenterbox(msg="Invalid username or password. Please try again:", fields=["Username", "Password"])
+                try:
+                    verification = verify(login_details[0], login_details[1])
+                except TypeError:
+                    break
         while login_signin == "Sign in":
             new_user_details = multenterbox(msg="Enter your new user details:", fields=["Username", "Password"])
             users[len(users)+1] = {
@@ -169,9 +203,15 @@ def __init__():
                 "password":new_user_details[1],
                 "user_file":"file_" + str(len(users)+1)
             }
-            __decrypt__("user_info.txt")
+            try:
+                __decrypt__("user_info.txt")
+            except:
+                pass
             dict_to_txt("user_info.txt", users)
-            __encrypt__("user_info.txt")
+            try:
+                __encrypt__("user_info.txt")
+            except:
+                pass
             login_signin = buttonbox(choices=["Login", "Sign in", "Exit"])
 
 __init__()
