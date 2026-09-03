@@ -78,7 +78,7 @@ def txt_to_dict(txt):
     tru_path = near_tru_path + txt
     with open(tru_path, "r") as file:
         a = file.read()
-    b = dict(a)
+    b = dict(eval(a))
     dictionary = b
     try:
         __encrypt__("user_info.txt")
