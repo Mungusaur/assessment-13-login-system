@@ -4,6 +4,7 @@ import os
 from cryptography.fernet import Fernet
 import subprocess
 import sys
+from pathlib import Path
 
 default_users = {
     1: {
@@ -39,7 +40,8 @@ def __check_key__():
 def __encrypt__(txt):
     key = __check_key__()
     fernet = Fernet(key)
-    tru_path = txt
+    dir_path = Path(__file__).resolve().parent
+    tru_path = str(dir_path) + "\\" + txt
     with open(tru_path, "r") as file:
         txt_content = file.read()
         if txt_content == '':
@@ -54,7 +56,8 @@ def __encrypt__(txt):
 def __decrypt__(txt):
     key = __check_key__()
     fernet = Fernet(key)
-    tru_path = txt
+    dir_path = Path(__file__).resolve().parent
+    tru_path = str(dir_path) + "\\" + txt
     with open(tru_path, "r") as file:
         txt_content = file.read()
         if txt_content == '':
@@ -69,24 +72,34 @@ def __decrypt__(txt):
 def create_account():
     username = easygui.enterbox("Enter a username:")
     password = easygui.passwordbox("Enter a password:")
-    with open("user_info.json", "r", encoding="utf-8") as file:
-        users = json.load(file)
+    dir_path = Path(__file__).resolve().parent
+    tru_path = str(dir_path) + "\\user_info.json"
+    with open(tru_path, "r", encoding="utf-8") as file:
+        users = json.load(file)["users"]
         users[len(users) + 1] = {
             "username": username,
             "password": password
         }
-    with open("user_info.json", "w", encoding="utf-8") as file:
+    with open(tru_path, "w", encoding="utf-8") as file:
         json.dump(users, file)
+    with open(f"{username}.txt", "x") as file:
+        file.write("")
+        try:
+            __encrypt__(f"{username}.txt")
+        except:
+            easygui.msgbox("Failed to encrypt user file. Your data may not be secure. Please run the program again.")
 
 def verify(username, password):
+    dir_path = Path(__file__).resolve().parent
+    tru_path = str(dir_path) + "\\user_info.json"
     try:
-        __decrypt__("user_info.json")
+        __decrypt__(tru_path)
     except:
         pass
-    with open("user_info.json", "r", encoding="utf-8") as file:
-        users = json.load(file)
+    with open(tru_path, "r", encoding="utf-8") as file:
+        users = json.load(file)["users"]
     try:
-        __encrypt__("user_info.json")
+        __encrypt__(tru_path)
     except:
         pass
     if username in [user["username"] for user in users.values()]:
