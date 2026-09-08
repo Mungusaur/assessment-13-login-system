@@ -9,20 +9,6 @@ import subprocess
 import sys
 import os
 
-users = {
-    1:{
-        "user_name":"default_1",
-        "password":"password_1",
-        "user_file":"file_1"
-       },
-    2:{
-        "user_name":"default_2",
-        "password":"password_2",
-        "user_file":"file_2"
-       }
-
-}
-
 def open_in_default_editor(filepath):
     # Ensure the file exists before opening
     if not os.path.exists(filepath):
@@ -78,8 +64,36 @@ def txt_to_dict(txt):
     tru_path = near_tru_path + txt
     with open(tru_path, "r") as file:
         a = file.read()
-    b = dict(eval(a))
-    dictionary = b
+    a = a.strip()
+    if a == "":
+        try:
+            __encrypt__("user_info.txt")
+        except:
+            pass
+        return {}
+    # Imported a module to enable a more powerful eval function.
+    import ast
+    # Removing added text from bytes conversion for a clean string to dictionary conversion.
+    if a.startswith("b'") or a.startswith('b"'):
+        a = a[2:]
+        if a.endswith("'") or a.endswith('"'):
+            a = a[:-1]
+    # adding matching braces to ensure valid dictionary format
+    start = a.find('{')
+    end = a.rfind('}')
+    if start != -1 and end != -1 and end >= start:
+        a_clean = a[start:end+1]
+    else:
+        a_clean = a
+    try:
+        dictionary = ast.literal_eval(a_clean)
+    except Exception:
+        print("first except")
+        try:
+            dictionary = dict(eval(a_clean))
+        except Exception:
+            print("second except")
+            dictionary = {}
     try:
         __encrypt__("user_info.txt")
     except:
@@ -125,8 +139,7 @@ def verify(username, password):
         __decrypt__("user_info.txt")
     except:
         pass
-    with open("user_info.txt", "r") as file:
-        a = file.read()
+    users = txt_to_dict("user_info.txt")
     try:
         __encrypt__("user_info.txt")
     except:
@@ -171,7 +184,9 @@ def make_files():
                 __encrypt__(user_file + ".txt")
             except:
                 pass
-        print("file created")
+            print("file created")
+        else:
+            print("file already exists")
 
 def __init__():
     make_files()
