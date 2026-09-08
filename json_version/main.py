@@ -80,8 +80,9 @@ def create_account():
             "username": username,
             "password": password
         }
+    json_data = {"users": users}
     with open(tru_path, "w", encoding="utf-8") as file:
-        json.dump(users, file)
+        json.dump(json_data, file)
     with open(f"{username}.txt", "x") as file:
         file.write("")
         try:
