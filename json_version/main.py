@@ -65,3 +65,69 @@ def __decrypt__(txt):
     with open(tru_path, "w") as file:
         file.write(new_data)
     return "complete"
+
+def create_account():
+    username = easygui.enterbox("Enter a username:")
+    password = easygui.passwordbox("Enter a password:")
+    with open("user_info.json", "r", encoding="utf-8") as file:
+        users = json.load(file)
+        users[len(users) + 1] = {
+            "username": username,
+            "password": password
+        }
+    with open("user_info.json", "w", encoding="utf-8") as file:
+        json.dump(users, file)
+
+def verify(username, password):
+    try:
+        __decrypt__("user_info.json")
+    except:
+        pass
+    with open("user_info.json", "r", encoding="utf-8") as file:
+        users = json.load(file)
+    try:
+        __encrypt__("user_info.json")
+    except:
+        pass
+    if username in [user["username"] for user in users.values()]:
+        if password == [user["password"] for user in users.values() if user["username"] == username][0]:
+            return True
+    return False
+
+def open_in_default_editor(file_path):
+    try:
+        if os.name == 'nt':  # For Windows
+            os.startfile(file_path)
+        elif os.name == 'posix':  # For macOS and Linux
+            subprocess.call(('open', file_path))
+        return True
+    except Exception as e:
+        easygui.msgbox(f"Failed to open the file: {e}")
+        return False
+
+def __init__():
+
+    while True:
+        choice = easygui.buttonbox("Welcome to the login system!", choices=["Login", "Create Account", "Exit"])
+        if choice == "Login":
+            username = easygui.enterbox("Enter your username:")
+            password = easygui.passwordbox("Enter your password:")
+            if verify(username, password):
+                easygui.msgbox("You have successfully logged in!")
+                try:
+                    __decrypt__(f"{username}.txt")
+                except:
+                    pass
+                open_in_default_editor(f"{username}.txt")
+                try:
+                    __encrypt__(f"{username}.txt")
+                except:
+                    pass
+            else:
+                easygui.msgbox("Invalid username or password.")
+        elif choice == "Create Account":
+            create_account()
+        elif choice == "Exit":
+            sys.exit()
+
+__init__()
