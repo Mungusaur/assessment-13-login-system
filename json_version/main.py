@@ -1,12 +1,19 @@
+# Makes Python recognize json files.
 import json
+# An intuitive GUI library for Python.
 import easygui
+# Allows program to read the oprerating system of the user and run some system commands.
 import os
+# Encrypting module. Keeps user data private.
 from cryptography.fernet import Fernet
+# Allows program to run system commands on a wider base of devices. Used to open user's txt tile on a linux and Posix environment.
 import subprocess
+# Allows for alternative loop breaking methods. Used to exit the program.
 import sys
+# Allows program to find the directory of current file and uses it to find user files.
 from pathlib import Path
 
-default_users = {
+DEFAULT_USERS = {
     1: {
         "username": "default_1",
         "password": "password_1",
@@ -71,7 +78,16 @@ def __decrypt__(txt):
 
 def create_account():
     username = easygui.enterbox("Enter a username:")
+    if username == None:
+        easygui.msgbox("Username cannot be empty.")
+        return
     password = easygui.passwordbox("Enter a password:")
+    if password == None:
+        easygui.msgbox("Password cannot be empty.")
+        return
+    if verify(username, password) == True:
+        easygui.msgbox("Username already exists. Please choose a different username.")
+        return
     dir_path = Path(__file__).resolve().parent
     tru_path = str(dir_path) + "\\user_info.json"
     with open(tru_path, "r", encoding="utf-8") as file:
@@ -83,12 +99,18 @@ def create_account():
     json_data = {"users": users}
     with open(tru_path, "w", encoding="utf-8") as file:
         json.dump(json_data, file)
-    with open(f"{username}.txt", "x") as file:
-        file.write("")
+    try:
+        with open(f"{username}.txt", "x") as file:
+            file.write("")
+    except FileExistsError:
+        with open(f"{username}.txt", "w") as file:
+            file.write("")
+
         try:
             __encrypt__(f"{username}.txt")
         except:
             easygui.msgbox("Failed to encrypt user file. Your data may not be secure. Please run the program again.")
+        
 
 def verify(username, password):
     dir_path = Path(__file__).resolve().parent
@@ -125,7 +147,13 @@ def __init__():
         choice = easygui.buttonbox("Welcome to the login system!", choices=["Login", "Create Account", "Exit"])
         if choice == "Login":
             username = easygui.enterbox("Enter your username:")
+            if username == None:
+                easygui.msgbox("Username cannot be empty.")
+                continue
             password = easygui.passwordbox("Enter your password:")
+            if password == None:
+                easygui.msgbox("Password cannot be empty.")
+                continue
             if verify(username, password):
                 easygui.msgbox("You have successfully logged in!")
                 try:
