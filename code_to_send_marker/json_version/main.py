@@ -136,13 +136,14 @@ def create_account():
     # Adds the "users" key back into the dictionary to solve the deletion of the "users" key when the user_info.json file is read and written to.
     with open(tru_path, "w", encoding="utf-8") as file:
         json.dump(json_data, file)
+    # Writes the updated dictionary back to the user_info.json file.
     try:
         with open(f"{username}.txt", "x") as file:
             file.write("")
     except FileExistsError:
         with open(f"{username}.txt", "w") as file:
             file.write("")
-
+    # Attempts to create a new file for the user. If the file already exists, it will overwrite the existing file with an empty file as a security measure to prevent another user from accessing the file.
         try:
             __encrypt__(f"{username}.txt")
         except:
@@ -182,6 +183,13 @@ def __init__():
     if not os.path.exists("user_info.json"):
         with open("user_info.json", "w") as file:
             json.dump(DEFAULT_USERS, file)
+        try:
+            with open("default_1.txt", "x") as file:
+                file.write("This is the default user 1 file.")
+            with open("default_2.txt", "x") as file:
+                file.write("This is the default user 2 file.")
+        except FileExistsError:
+            pass
     while True:
         choice = easygui.buttonbox(msg="Welcome to the login system!", title="Login System", choices=["Login", "Create Account", "Exit"])
         if choice == "Login":
