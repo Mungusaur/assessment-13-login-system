@@ -153,12 +153,14 @@ def create_account():
 def verify(username, password):
     dir_path = Path(__file__).resolve().parent
     tru_path = str(dir_path) + "\\user_info.json"
+    # Gets the full path of the user_info.json file.
     try:
         __decrypt__(tru_path)
     except:
         pass
     with open(tru_path, "r", encoding="utf-8") as file:
         users = json.load(file)["users"]
+    # Reads the user_info.json file and loads the data into a dictionary.
     try:
         __encrypt__(tru_path)
     except:
@@ -167,17 +169,20 @@ def verify(username, password):
         if password == [user["password"] for user in users.values() if user["username"] == username][0]:
             return True
     return False
+    # Returns True if the username and password match an existing user in the user_info.json file. Returns False if they do not match.
 
 def open_in_default_editor(file_path):
+    # Function reads the operating system of the user and opens the designated file in the default text editor for that operating system.
     try:
         if os.name == 'nt':  # For Windows
-            os.startfile(file_path)
+            os.startfile(file_path).wait()
         elif os.name == 'posix':  # For macOS and Linux
-            subprocess.call(('open', file_path))
+            subprocess.call(('open', file_path)).wait()
         return True
     except Exception as e:
         easygui.msgbox(msg=f"Failed to open the file: {e}", title="Error")
         return False
+    # Returns True if the file was opened successfully. Returns False if there was an error opening the file.
 
 def __init__():
     if not os.path.exists("user_info.json"):
@@ -190,6 +195,8 @@ def __init__():
                 file.write("This is the default user 2 file.")
         except FileExistsError:
             pass
+    # Checks for the existence of the user_info.json file. If it doesn't exist, it creates it and assumes that the default files don't exist either.
+    # However it does have a try/except block to catch the FileExistsError in case the default files do exist but the user_info.json file doesn't.
     while True:
         choice = easygui.buttonbox(msg="Welcome to the login system!", title="Login System", choices=["Login", "Create Account", "Exit"])
         if choice == "Login":
@@ -201,6 +208,7 @@ def __init__():
             if password == None:
                 easygui.msgbox(msg="Password cannot be empty.", title="Error")
                 continue
+        # This section asks for the user's username and password but makes them retry if they enter nothing in a field.
             if verify(username, password):
                 easygui.msgbox(msg="You have successfully logged in!", title="Login Successful")
                 try:
@@ -212,11 +220,14 @@ def __init__():
                     __encrypt__(f"{username}.txt")
                 except:
                     pass
+        # This section checks if the username and password match an existing user in the user_info.json file.
+        # If they do, it decrypts the user's file, opens it in the default text editor, and then encrypts it again after the user is done.
             else:
                 easygui.msgbox(msg="Invalid username or password.", title="Error")
         elif choice == "Create Account":
             create_account()
         elif choice == "Exit":
             sys.exit()
+        # Calls the sys module to close the program.
 
 __init__()
