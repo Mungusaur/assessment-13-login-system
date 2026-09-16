@@ -175,11 +175,9 @@ def open_in_default_editor(file_path):
     # Function reads the operating system of the user and opens the designated file in the default text editor for that operating system.
     try:
         if os.name == 'nt':  # For Windows
-            p = os.startfile(file_path)
-            p.wait()
+            os.startfile(file_path)
         elif os.name == 'posix':  # For macOS and Linux
-            p = subprocess.call(('open', file_path))
-            p.wait()
+            subprocess.call(('open', file_path))
         return True
     except Exception as e:
         easygui.msgbox(msg=f"Failed to open the file: {e}", title="Error")
