@@ -27,84 +27,9 @@ DEFAULT_USERS = {
     }
 }
 
-def __check_key__():
-    # Function checks if the encryption key exists and creates it if it doesn't. Returns the encryption key.
-    try:
-        __decrypt__("user_info.json")
-    except:
-        pass
-    # Attempts to decrypt the user_info.json file. If it fails, it means that the file is already decrypted or the key is missing.
-    if not os.path.exists("donotopen.key"):
-        key = Fernet.generate_key()
-        with open("donotopen.key", "wb") as file:
-            file.write(key)
-        if os.path.getsize("donotopen.key") == 0:
-            key = Fernet.generate_key()
-            with open("donotopen.key", "wb") as file:
-                file.write(key)
-    # Uses os module to check if the encryption file exists. If not then it creates the file and generates a new key.
-    else:
-        if os.path.getsize("donotopen.key") == 0:
-            key = Fernet.generate_key()
-            with open("donotopen.key", "wb") as file:
-                file.write(key)
-        with open("donotopen.key", "rb") as file:
-            key = file.read()
-    # Uses os module to check if the key file is empty. If it is then it generates a new key and writes it to the file. If not then it reads the key from the file.
-    try:
-        __encrypt__("user_info.json")
-    except:
-        pass
-    # Attempts to encrypt the user_info.json file. If it fails, it means that the file is already encrypted or the key is missing.
-    return key
 
-def __encrypt__(__file__):
-    # Function uses the Fernet module to encrypt the designated file.
-    key = __check_key__()
-    # Calls the __check_key__ function to get the encryption key.
-    fernet = Fernet(key)
-    # Initializes the Fernet module with the encryption key.
-    dir_path = Path(__file__).resolve().parent
-    tru_path = str(dir_path) + "\\" + __file__
-    # Gets the full path of the file to be encrypted.
-    with open(tru_path, "r") as file:
-        txt_content = file.read()
-        if txt_content == '':
-            return "empty"
-    # Returns "empty" if the file is empty to remove the error that occurs when trying to encrypt an empty file.
-    new_data = fernet.encrypt(txt_content.encode('utf-8'))
-    # Makes sure that the data is encoded in UTF-8 before encrypting it to avoid errors with special characters or conversion artifacts.
-    new_data = str(new_data)
-    new_data = new_data[2:-1]
-    # Converts the encrypted data to a string and removes the b'' prefix and suffix that is added when converting bytes to string.
-    with open(tru_path, "w") as file:
-        file.write(new_data)
-    # Writes the encrypted data back to the file.
-    return "complete"
 
-def __decrypt__(__file__):
-    # Function uses the Fernet module to decrypt the designated file.
-    key = __check_key__()
-    # Calls the __check_key__ function to get the encryption key.
-    fernet = Fernet(key)
-    # Initializes the Fernet module with the encryption key.
-    dir_path = Path(__file__).resolve().parent
-    tru_path = str(dir_path) + "\\" + __file__
-    # Gets the full path of the file to be decrypted.
-    with open(tru_path, "r") as file:
-        txt_content = file.read()
-        if txt_content == '':
-            return "empty"
-    # Returns "empty" if the file is empty to remove the error that occurs when trying to decrypt an empty file.
-    new_data = fernet.decrypt(txt_content.encode('utf-8'))
-    # Makes sure that the data is encoded in UTF-8 before decrypting it to avoid errors with special characters or conversion artifacts.
-    new_data = str(new_data)
-    new_data = new_data[2:-1]
-    # Converts the decrypted data to a string and removes the b'' prefix and suffix that is added when converting bytes to string.
-    with open(tru_path, "w") as file:
-        file.write(new_data)
-    # Writes the decrypted data back to the file.
-    return "complete"
+
 
 def create_account():
     # Function creates a new user account and file for the user and adds the user to the user_info.json file.
@@ -144,31 +69,26 @@ def create_account():
         with open(f"{username}.txt", "w") as file:
             file.write("")
     # Attempts to create a new file for the user. If the file already exists, it will overwrite the existing file with an empty file as a security measure to prevent another user from accessing the file.
-        try:
-            __encrypt__(f"{username}.txt")
-        except:
-            easygui.msgbox(msg="Failed to encrypt user file. Your data may not be secure. Please run the program again.", title="Error")
+
         
 
 def verify(username, password):
     dir_path = Path(__file__).resolve().parent
     tru_path = str(dir_path) + "\\user_info.json"
     # Gets the full path of the user_info.json file.
-    try:
-        __decrypt__(tru_path)
-    except:
-        pass
+
     with open(tru_path, "r", encoding="utf-8") as file:
         users = json.load(file)["users"]
     # Reads the user_info.json file and loads the data into a dictionary.
-    try:
-        __encrypt__(tru_path)
-    except:
-        pass
+
     if username in [user["username"] for user in users.values()]:
         if password == [user["password"] for user in users.values() if user["username"] == username][0]:
             return True
-    return False
+        else:
+            return False
+    else:
+        return False
+    return "uncomplete"
     # Returns True if the username and password match an existing user in the user_info.json file. Returns False if they do not match.
 
 def open_in_default_editor(file_path):
@@ -208,18 +128,14 @@ def __init__():
             if password == None:
                 easygui.msgbox(msg="Password cannot be empty.", title="Error")
                 continue
+            print("before")
         # This section asks for the user's username and password but makes them retry if they enter nothing in a field.
             if verify(username, password) == True:
+                print("after")
                 easygui.msgbox(msg="You have successfully logged in!", title="Login Successful")
-                try:
-                    __decrypt__(f"{username}.txt")
-                except:
-                    pass
+
                 open_in_default_editor(f"{username}.txt")
-                try:
-                    __encrypt__(f"{username}.txt")
-                except:
-                    pass
+
         # This section checks if the username and password match an existing user in the user_info.json file.
         # If they do, it decrypts the user's file, opens it in the default text editor, and then encrypts it again after the user is done.
             else:
@@ -229,5 +145,6 @@ def __init__():
         elif choice == "Exit":
             sys.exit()
         # Calls the sys module to close the program.
+
 
 __init__()
