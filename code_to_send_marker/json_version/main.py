@@ -175,9 +175,11 @@ def open_in_default_editor(file_path):
     # Function reads the operating system of the user and opens the designated file in the default text editor for that operating system.
     try:
         if os.name == 'nt':  # For Windows
-            os.startfile(file_path).wait()
+            p = os.startfile(file_path)
+            p.wait()
         elif os.name == 'posix':  # For macOS and Linux
-            subprocess.call(('open', file_path)).wait()
+            p = subprocess.call(('open', file_path))
+            p.wait()
         return True
     except Exception as e:
         easygui.msgbox(msg=f"Failed to open the file: {e}", title="Error")
@@ -209,7 +211,7 @@ def __init__():
                 easygui.msgbox(msg="Password cannot be empty.", title="Error")
                 continue
         # This section asks for the user's username and password but makes them retry if they enter nothing in a field.
-            if verify(username, password):
+            if verify(username, password) == True:
                 easygui.msgbox(msg="You have successfully logged in!", title="Login Successful")
                 try:
                     __decrypt__(f"{username}.txt")
